@@ -1,0 +1,17 @@
+from airflow import DAG
+from datetime import datetime as dt, timedelta
+
+
+def _custom_task():
+    {{ context }}
+
+
+with DAG("{{ name }}",
+         start_date=dt(2023, 1, 1),
+         schedule_interval=timedelta(days={{ interval }}),
+         catchup={{ catchup or False }}) as dag:
+
+         current_task = PythonOperator(
+             task_id="{{ name }}",
+             python_callable=_custom_task
+         )

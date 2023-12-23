@@ -120,7 +120,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres-me-storage:/var/lib/postgresql/data
+      - postgres-met-storage:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 10s
@@ -136,6 +136,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/backend
+      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
+      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
 
@@ -311,6 +313,6 @@ services:
 
 volumes:
   postgres-db-volume:
-  postgres-me-storage:
+  postgres-met-storage:
 
 

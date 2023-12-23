@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 
 from .models import MetaDAG
 from .serializers import DAGSerializers
+from .utils import DAGManager
 
 
 class DAGListAPIView(APIView):
@@ -24,9 +25,10 @@ class AddDAG(APIView):
             interval=request.data.get('interval', 0)
         )
 
-        dags = MetaDAG.objects.all()
+        manager = DAGManager()
+        manager.add(request.data)
 
-        return Response({"dags": DAGSerializers(dags, many=True).data,
+        return Response({"dags": DAGSerializers(MetaDAG.objects.all(), many=True).data,
                          "new_dag": DAGSerializers(new_dag).data,
                          "status": "success",
                          "code": 200})
