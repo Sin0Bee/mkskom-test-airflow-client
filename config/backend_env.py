@@ -16,6 +16,7 @@ class DBData(BaseModel):
 
 class Config:
     DB_CONFIG: DBData
+    SECRET_TOKEN = os.environ.get('SECRET_TOKEN')
 
     def __init__(self):
         self.DB_CONFIG = self._db()
