@@ -44,7 +44,7 @@ class Config:
     def _auth(self):
         login = os.environ.get('AIRFLOW_L')
         password = os.environ.get('AIRFLOW_P')
-        print(login, password)
+
         return AuthData(login=login, password=password)
 
 
