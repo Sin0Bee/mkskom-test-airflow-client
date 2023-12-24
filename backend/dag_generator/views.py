@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from airflow_api.airflow import AirflowAPI
 from .models import MetaDAG
 from .serializers import DAGSerializers
 from .utils import DAGManager
@@ -12,7 +13,7 @@ class DAGListAPIView(APIView):
         dags = MetaDAG.objects.all()
         return Response({"dags": DAGSerializers(dags, many=True).data,
                          "status": "success",
-                         "code": 200})
+                         "status_code": 200})
 
 
 class AddDAG(APIView):
@@ -30,11 +31,11 @@ class AddDAG(APIView):
         return Response({"dags": DAGSerializers(MetaDAG.objects.all(), many=True).data,
                          "new_dag": DAGSerializers(new_dag).data,
                          "status": "success",
-                         "code": 201})
+                         "status_code": 201})
 
 
 class UpdateDAG(APIView):
-    def post(self, request):
+    def patch(self, request):
 
         MetaDAG.objects.filter(pk=request.data['id']).update(**request.data['update_param'])
 
@@ -42,12 +43,13 @@ class UpdateDAG(APIView):
 
         return Response({"dags": DAGSerializers(dags, many=True).data,
                          "status": "success",
-                         "code": 200
+                         "status_code": 200
                          })
 
 
 class DeleteDAG(APIView):
-    def post(self, request):
+    def delete(self, request):
+        dag_manager = DAGManager()
 
         MetaDAG.objects.filter(pk=request.data['id']).delete()
 
@@ -55,5 +57,5 @@ class DeleteDAG(APIView):
 
         return Response({"dags": DAGSerializers(dags, many=True).data,
                          "status": "success",
-                         "code": 200
+                         "status_code": 200
                          })

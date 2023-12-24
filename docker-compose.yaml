@@ -141,6 +141,28 @@ services:
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
 
+#  web-api-beat:
+#    build: ./backend
+#    container_name: 'web-api-worker'
+#    command: celery -A celery_app.app beat -l info
+#    volumes:
+#      - ./backend:/backend
+#    links:
+#      - redis
+#    depends_on:
+#      - web-api
+#      - redis
+#
+#  web-api-worker:
+#    build: ./backend
+#    container_name: 'web-api-worker'
+#    command: celery -A celery_app.app worker -l info
+#    volumes:
+#      - ./backend:/backend
+#    links:
+#      - redis
+#    depends_on:
+#      - web-api-beat
 
   airflow-webserver:
     <<: *airflow-common
