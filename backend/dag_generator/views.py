@@ -52,7 +52,7 @@ class DeleteDAG(APIView):
         dag_manager = DAGManager()
 
         MetaDAG.objects.filter(pk=request.data['id']).delete()
-
+        dag_manager.delete(request.data)
         dags = MetaDAG.objects.all()
 
         return Response({"dags": DAGSerializers(dags, many=True).data,
