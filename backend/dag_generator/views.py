@@ -18,11 +18,11 @@ class DAGListAPIView(APIView):
 class AddDAG(APIView):
     def post(self, request):
         manager = DAGManager()
-        state = manager.add(request.data)
+        result = manager.add(request.data)
 
         new_dag = MetaDAG.objects.create(
-            name=request.data['name'],
-            file_path=state['path'],
+            name=result['data']['filename'],
+            file_path=result['data']['path'],
             context=request.data['context'],
             interval=request.data.get('interval', 0)
         )
@@ -30,7 +30,7 @@ class AddDAG(APIView):
         return Response({"dags": DAGSerializers(MetaDAG.objects.all(), many=True).data,
                          "new_dag": DAGSerializers(new_dag).data,
                          "status": "success",
-                         "code": 200})
+                         "code": 201})
 
 
 class UpdateDAG(APIView):
