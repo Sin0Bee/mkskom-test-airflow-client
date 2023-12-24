@@ -39,11 +39,13 @@ class _GeneratorDAG:
                 continue
 
         for filename in files:
-            if filename == fn:
-                new_filename = f'{"".join(fn.split(".")[:-1])}_{random.randint(1, 100)}.py'
+            if filename == fn + ".py":
+                new_filename = f'{fn}{"".join(fn.split(".")[:-1])}_{random.randint(1, 100)}'
                 return self._check_filename(new_filename)
             else:
-                return fn
+                continue
+
+        return fn
 
 
 class DAGManager:
@@ -67,15 +69,39 @@ class DAGManager:
         return {"response": "success",
                 "data": dag_data}
 
+    def delete(self, data: dict) -> dict:
+        response = {}
+
+        delete_status = self.delete_dag_file(filename=data['name'])
+        if delete_status:
+            response_airflow = self.airflow_api.delete_dag(dag_id=data['name'])
+            if response_airflow['response'] == 'success':
+                response['status_code'] = 200
+                response['status'] = 'success'
+                response['airflow_api_response'] = response_airflow
+
+                return response
+            else:
+                response['status_code'] = 400
+                response['status'] = 'fall'
+                response['airflow_api_response'] = response_airflow
+
+                return response
+        else:
+            response['status_code'] = 400
+            response['status'] = 'fall'
+
+            return response
+
     def delete_dag_file(self, filename: str) -> dict:
         if self.check_dag_file(filename=filename):
-            os.remove(self._BASE_DAG_DIRECTORY + f"/{filename}")
+            os.remove(self._BASE_DAG_DIRECTORY + f"/{filename}.py")
             return {"status": "success"}
         return {"status": "fall"}
 
     def check_dag_file(self, filename: str) -> bool:
         files = os.listdir(self._BASE_DAG_DIRECTORY)
         for fn in files:
-            if fn == filename:
+            if fn == filename + ".py":
                 return True
         return False
