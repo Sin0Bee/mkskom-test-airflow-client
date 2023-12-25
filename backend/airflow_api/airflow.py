@@ -3,7 +3,8 @@ from config.backend_env import config
 
 
 class AirflowAPI:
-    _BASE_URL = "http://airflow-webserver:8080/api/v1/"
+    _BASE_URL = "http://localhost:8080/api/v1/"
+    # _BASE_URL = "http://airflow-webserver:8080/api/v1/"
     _HEADERS = {
         "Content-type": "application/json",
         "Accept": "application/json"
@@ -52,6 +53,7 @@ class AirflowAPI:
                     "response": "fall"}
 
     def update_dag(self, dag_id: str, **param) -> dict:
+        print(param)
         try:
             res = self.session.patch(url=self._BASE_URL + f"dags/{dag_id}",
                                      headers=self._HEADERS,

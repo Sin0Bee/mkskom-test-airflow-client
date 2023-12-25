@@ -36,8 +36,12 @@ class AddDAG(APIView):
 
 class UpdateDAG(APIView):
     def patch(self, request):
+        manager = DAGManager()
+
+        request.data['update_param']['status'] = False
 
         MetaDAG.objects.filter(pk=request.data['id']).update(**request.data['update_param'])
+        manager.update(filename=request.data['name'], data=request.data)
 
         dags = MetaDAG.objects.all()
 

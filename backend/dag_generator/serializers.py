@@ -9,4 +9,7 @@ class DAGSerializers(serializers.Serializer):
     update_at = serializers.DateTimeField(allow_null=True)
     context = serializers.CharField()
     interval = serializers.IntegerField()
+    status = serializers.BooleanField()
+    on_delete = serializers.BooleanField()
+    is_active = serializers.BooleanField()
 
