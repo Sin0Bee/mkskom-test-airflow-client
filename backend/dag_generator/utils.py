@@ -91,19 +91,8 @@ class DAGManager:
             return response
 
     def update(self, filename: str, data: dict) -> dict:
-
-        interval = data['update_param'].get('interval', None)
-        context = data['update_param'].get('context', None)
-
-        if interval is not None:
-            interval = data['update_param'].get('interval', None)
-        else:
-            interval = data['interval']
-
-        if context is not None:
-            context = data['update_param'].get('context', None)
-        else:
-            context = data['context']
+        interval = self._check_param(param_name="interval", data=data)
+        context = self._check_param(param_name="context", data=data)
 
         update_data = {
             "name": filename,
@@ -111,33 +100,44 @@ class DAGManager:
             "interval": interval
         }
 
-        generator = _GeneratorDAG(update_data)
         response = {}
 
         delete_status = self.delete_dag_file(filename=filename)
 
         if delete_status:
             response_airflow = self.airflow_api.delete_dag(dag_id=filename)
-
-            path, filename = generator.generate(update_data)
-            response['path'] = path
+            generator = _GeneratorDAG(update_data)
+            generator.generate()
 
             if response_airflow['response'] == 'success':
                 response['status_code'] = 200
                 response['status'] = 'success'
+                response['data'] = update_data
 
                 return response
             else:
                 response['status_code'] = 400
                 response['status'] = 'fall'
+                response['data'] = update_data
 
                 return response
 
+    def _check_param(self, param_name: str, data: dict):
+        result = data.get('update_param', None)
 
+        if result is not None:
+            result = data['update_param'].get(param_name, None)
+            if result is not None:
+                return data['update_param'].get(param_name, None)
+            else:
+                return data[param_name]
+        else:
+            return data[param_name]
 
     def delete_dag_file(self, filename: str) -> dict:
         if self.check_dag_file(filename=filename):
             os.remove(self._BASE_DAG_DIRECTORY + f"/{filename}.py")
+
             return {"status": "success"}
         return {"status": "fall"}
 
@@ -147,7 +147,3 @@ class DAGManager:
             if fn == filename + ".py":
                 return True
         return False
-
-
-c = DAGManager()
-# c.update()
