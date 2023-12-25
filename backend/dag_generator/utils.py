@@ -64,8 +64,6 @@ class DAGManager:
         dag_data['path'] = path
         dag_data['filename'] = filename
 
-        self.airflow_api.unpause_dag(dag_id=filename)
-
         return {"response": "success",
                 "data": dag_data}
 
@@ -73,18 +71,17 @@ class DAGManager:
         response = {}
 
         delete_status = self.delete_dag_file(filename=data['name'])
+
         if delete_status:
             response_airflow = self.airflow_api.delete_dag(dag_id=data['name'])
             if response_airflow['response'] == 'success':
                 response['status_code'] = 200
                 response['status'] = 'success'
-                response['airflow_api_response'] = response_airflow
 
                 return response
             else:
                 response['status_code'] = 400
                 response['status'] = 'fall'
-                response['airflow_api_response'] = response_airflow
 
                 return response
         else:
@@ -92,6 +89,51 @@ class DAGManager:
             response['status'] = 'fall'
 
             return response
+
+    def update(self, filename: str, data: dict) -> dict:
+
+        interval = data['update_param'].get('interval', None)
+        context = data['update_param'].get('context', None)
+
+        if interval is not None:
+            interval = data['update_param'].get('interval', None)
+        else:
+            interval = data['interval']
+
+        if context is not None:
+            context = data['update_param'].get('context', None)
+        else:
+            context = data['context']
+
+        update_data = {
+            "name": filename,
+            "context": context,
+            "interval": interval
+        }
+
+        generator = _GeneratorDAG(update_data)
+        response = {}
+
+        delete_status = self.delete_dag_file(filename=filename)
+
+        if delete_status:
+            response_airflow = self.airflow_api.delete_dag(dag_id=filename)
+
+            path, filename = generator.generate(update_data)
+            response['path'] = path
+
+            if response_airflow['response'] == 'success':
+                response['status_code'] = 200
+                response['status'] = 'success'
+
+                return response
+            else:
+                response['status_code'] = 400
+                response['status'] = 'fall'
+
+                return response
+
+
 
     def delete_dag_file(self, filename: str) -> dict:
         if self.check_dag_file(filename=filename):
@@ -105,3 +147,7 @@ class DAGManager:
             if fn == filename + ".py":
                 return True
         return False
+
+
+c = DAGManager()
+# c.update()

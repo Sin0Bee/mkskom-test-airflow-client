@@ -5,7 +5,7 @@ from dag_generator.models import MetaDAG
 from django.db.utils import DataError
 
 
-# @app.task
+@app.task
 def unpause():
     airflow_api = AirflowAPI()
 

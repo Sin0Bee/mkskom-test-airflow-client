@@ -58,8 +58,8 @@ x-airflow-common:
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
-    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
 
     # yamllint disable rule:line-length
@@ -120,7 +120,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres-met-storage:/var/lib/postgresql/data
+      - postgres-meta-storage-volume:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 10s
@@ -138,15 +138,25 @@ services:
       - ./backend:/backend
       - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
       - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py makemigrations
+        python manage.py migrate
+        python manage.py runserver 0.0.0.0:8000
 
 #  web-api-beat:
-#    build: ./backend
-#    container_name: 'web-api-worker'
-#    command: celery -A celery_app.app beat -l info
+#    build:
+#      context: backend
+#      dockerfile: ../backend.Dockerfile
+#    container_name: 'web-api-beat'
+#    entrypoint: celery
+#    command: -A celery_app.app beat -l info
 #    volumes:
 #      - ./backend:/backend
+#      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
+#      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
 #    links:
 #      - redis
 #    depends_on:
@@ -154,11 +164,16 @@ services:
 #      - redis
 #
 #  web-api-worker:
-#    build: ./backend
+#    build:
+#      context: backend
+#      dockerfile: ../backend.Dockerfile
 #    container_name: 'web-api-worker'
-#    command: celery -A celery_app.app worker -l info
+#    entrypoint: celery
+#    command: -A celery_app.app worker -l info
 #    volumes:
 #      - ./backend:/backend
+#      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
+#      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
 #    links:
 #      - redis
 #    depends_on:
@@ -335,6 +350,6 @@ services:
 
 volumes:
   postgres-db-volume:
-  postgres-met-storage:
+  postgres-meta-storage-volume:
 
 

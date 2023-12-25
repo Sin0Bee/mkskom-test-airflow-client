@@ -20,3 +20,9 @@ class MetaDAG(models.Model):
     interval = models.PositiveIntegerField()
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+    status = models.BooleanField(default=False)
+    on_delete = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"ID: {self.pk} | NAME: {self.name} | SYS_ID: <{id(self)}>"
