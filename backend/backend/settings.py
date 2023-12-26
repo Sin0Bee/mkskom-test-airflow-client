@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'dag_generator.apps.DagGeneratorConfig'
+    'dag_generator.apps.DagGeneratorConfig',
+    'drf_yasg'
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,5 @@ CACHES = {
         "LOCATION": f"redis://{config.REDIS.host}:{config.REDIS.port}/3",
     }
 }
+
+

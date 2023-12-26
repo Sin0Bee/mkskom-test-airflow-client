@@ -1,16 +1,33 @@
 from datetime import datetime
 
 from django.db import models
+from django.db.models import QuerySet
 from pydantic import BaseModel
 
 
 class DAGData(BaseModel):
     name: str
-    file_path: str
     interval: int
     context: str
-    create_at: datetime | None
-    update_at: datetime | None
+    pk: int | None = None
+    file_path: str | None = None
+    create_at: datetime | None = None
+    update_at: datetime | None = None
+    status: bool | None = None
+    on_delete: bool | None = None
+    is_active: bool | None = None
+
+    def query_set_to_obj(self, data: QuerySet):
+        obj_data = data.values()
+        print(obj_data)
+        return DAGData(
+            name=obj_data['name'],
+            interval=obj_data['interval'],
+            context=obj_data['context'],
+        )
+
+    def to_dict(self):
+        ...
 
 
 class MetaDAG(models.Model):
