@@ -90,9 +90,9 @@ class DAGManager:
 
             return response
 
-    def update(self, filename: str, data: dict) -> dict:
-        interval = self._check_param(param_name="interval", data=data)
-        context = self._check_param(param_name="context", data=data)
+    def update(self, filename: str, data: dict, db_data: dict) -> dict | None:
+        interval = self._check_param(param_name="interval", data=data, db_data=db_data)
+        context = self._check_param(param_name="context", data=data, db_data=db_data)
 
         update_data = {
             "name": filename,
@@ -109,30 +109,16 @@ class DAGManager:
             generator = _GeneratorDAG(update_data)
             generator.generate()
 
-            if response_airflow['response'] == 'success':
-                response['status_code'] = 200
-                response['status'] = 'success'
-                response['data'] = update_data
+            response['status'] = 'fall'
+            response['data'] = update_data
 
-                return response
-            else:
-                response['status_code'] = 400
-                response['status'] = 'fall'
-                response['data'] = update_data
+            return response
 
-                return response
-
-    def _check_param(self, param_name: str, data: dict):
-        result = data.get('update_param', None)
-
-        if result is not None:
-            result = data['update_param'].get(param_name, None)
-            if result is not None:
-                return data['update_param'].get(param_name, None)
-            else:
-                return data[param_name]
-        else:
+    def _check_param(self, param_name: str, data: dict, db_data: dict):
+        if data[param_name] != db_data[param_name]:
             return data[param_name]
+        else:
+            return db_data[param_name]
 
     def delete_dag_file(self, filename: str) -> dict:
         if self.check_dag_file(filename=filename):

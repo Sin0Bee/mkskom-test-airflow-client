@@ -17,15 +17,6 @@ class DAGData(BaseModel):
     on_delete: bool | None = None
     is_active: bool | None = None
 
-    def query_set_to_obj(self, data: QuerySet):
-        obj_data = data.values()
-        print(obj_data)
-        return DAGData(
-            name=obj_data['name'],
-            interval=obj_data['interval'],
-            context=obj_data['context'],
-        )
-
     def to_dict(self):
         ...
 
