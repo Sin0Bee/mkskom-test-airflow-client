@@ -1,22 +1,19 @@
+from django.db.models import QuerySet
+from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from airflow_api.airflow import AirflowAPI
-from .models import MetaDAG
+from .models import MetaDAG, DAGData
 from .serializers import DAGSerializers
 from .utils import DAGManager
 
 
-class DAGListAPIView(APIView):
+class DAGAPIView(generics.GenericAPIView):
+
+    serializer_class = DAGSerializers
 
     def get(self, request):
-        dags = MetaDAG.objects.all()
-        return Response({"dags": DAGSerializers(dags, many=True).data,
-                         "status": "success",
-                         "status_code": 200})
+        return self._return_items()
 
-
-class AddDAG(APIView):
     def post(self, request):
         manager = DAGManager()
         result = manager.add(request.data)
@@ -28,35 +25,49 @@ class AddDAG(APIView):
             interval=request.data.get('interval', 0)
         )
 
-        return Response({"dags": DAGSerializers(MetaDAG.objects.all(), many=True).data,
-                         "new_dag": DAGSerializers(new_dag).data,
+        return self._return_items(update=True, update_data=new_dag)
+
+    def _return_items(self, update: bool = None, update_data: QuerySet = None):
+        dags = MetaDAG.objects.all()
+
+        if update is not None:
+            return Response({"dags": DAGSerializers(dags, many=True).data,
+                         "new_dag": DAGSerializers(update_data).data,
                          "status": "success",
                          "status_code": 201})
+        else:
+
+            return Response({"dags": DAGSerializers(dags, many=True).data,
+                         "status": "success",
+                         "status_code": 200})
 
 
-class UpdateDAG(APIView):
-    def patch(self, request):
+class DAGWithIdAPIView(generics.GenericAPIView):
+
+    serializer_class = DAGSerializers
+
+    def patch(self, request, pk: int):
         manager = DAGManager()
 
         request.data['update_param']['status'] = False
 
-        MetaDAG.objects.filter(pk=request.data['id']).update(**request.data['update_param'])
+        MetaDAG.objects.filter(pk=pk).update(**request.data['update_param'])
         manager.update(filename=request.data['name'], data=request.data)
 
-        dags = MetaDAG.objects.all()
+        return self._return_items()
 
-        return Response({"dags": DAGSerializers(dags, many=True).data,
-                         "status": "success",
-                         "status_code": 200
-                         })
-
-
-class DeleteDAG(APIView):
-    def delete(self, request):
+    def delete(self, request, pk: int):
         dag_manager = DAGManager()
 
-        MetaDAG.objects.filter(pk=request.data['id']).delete()
-        dag_manager.delete(request.data)
+        qs_obj = MetaDAG.objects.filter(pk=pk)
+        dag_data = qs_obj.values()
+
+        del_status = dag_manager.delete(dag_data[0])
+        qs_obj.delete()
+
+        return self._return_items()
+
+    def _return_items(self):
         dags = MetaDAG.objects.all()
 
         return Response({"dags": DAGSerializers(dags, many=True).data,
