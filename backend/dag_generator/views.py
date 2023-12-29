@@ -24,14 +24,14 @@ class DAGAPIView(generics.GenericAPIView):
             interval=request.data.get('interval', 0)
         )
 
-        return self._return_items(update=True, update_data=new_dag)
+        return self._return_items(update=True, new_item=new_dag)
 
-    def _return_items(self, update: bool = None, update_data: QuerySet = None) -> Response:
+    def _return_items(self, update: bool = None, new_item: QuerySet = None) -> Response:
         dags = MetaDAG.objects.all()
 
         if update is not None:
             return Response({"dags": DAGSerializers(dags, many=True).data,
-                             "new_dag": DAGSerializers(update_data).data}, status=201)
+                             "new_dag": DAGSerializers(new_item).data}, status=201)
         else:
             return Response({"dags": DAGSerializers(dags, many=True).data}, status=200)
 
