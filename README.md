@@ -1,13 +1,19 @@
-Требования.
+# mkskom-test-airflow-client
 
-1. Ubuntu server 22
-2. Docker && Docker-compose
+## Project setup
+```
+npm install
+```
 
-Подготовка к запуску.
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-1. Создать новые директории в корне проекта: mkdir ./plugins ./dags ./logs ./config
-2. Генерируем .env файл для airflow: echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
-3. Инициализируем зависимости airflow: docker-compose up airflow-init
+### Compiles and minifies for production
+```
+npm run build
+```
 
-Гайд по запуску и сама docker-compose file взят с канала: https://www.youtube.com/watch?v=aTaytcxy2Ck
-
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -145,6 +145,7 @@ services:
         python manage.py makemigrations
         python manage.py migrate
         python manage.py runserver 0.0.0.0:8000
+    restart: always
 
 #  web-api-beat:
 #    build:
@@ -178,6 +179,17 @@ services:
 #      - redis
 #    depends_on:
 #      - web-api-beat
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: ../frontend.Dockerfile
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - 80:80
+    restart: always
+
 
   airflow-webserver:
     <<: *airflow-common
