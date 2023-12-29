@@ -31,14 +31,9 @@ class DAGAPIView(generics.GenericAPIView):
 
         if update is not None:
             return Response({"dags": DAGSerializers(dags, many=True).data,
-                             "new_dag": DAGSerializers(update_data).data,
-                             "status": "success",
-                             "status_code": 201})
+                             "new_dag": DAGSerializers(update_data).data}, status=201)
         else:
-
-            return Response({"dags": DAGSerializers(dags, many=True).data,
-                             "status": "success",
-                             "status_code": 200})
+            return Response({"dags": DAGSerializers(dags, many=True).data}, status=200)
 
 
 class DAGWithIdAPIView(generics.GenericAPIView):
@@ -73,12 +68,6 @@ class DAGWithIdAPIView(generics.GenericAPIView):
         dags = MetaDAG.objects.all()
 
         if error:
-            return Response({"dags": DAGSerializers(dags, many=True).data,
-                             "status": "success",
-                             "status_code": 200
-                             })
+            return Response({"dags": DAGSerializers(dags, many=True).data}, status=200)
         else:
-            return Response({"dags": DAGSerializers(dags, many=True).data,
-                             "status": "error",
-                             "status_code": 400
-                             })
+            return Response({"dags": DAGSerializers(dags, many=True).data}, status=400)
