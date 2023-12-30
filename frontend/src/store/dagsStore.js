@@ -6,8 +6,7 @@ export const useDagsStore = defineStore("dagStore", {
     state: () => ({
         loader: false,
         data: [],
-        newItem: {
-            
+        newItem: {            
             id: 0,
             name: '',
             context: '',
@@ -15,30 +14,44 @@ export const useDagsStore = defineStore("dagStore", {
             create_at: '',
             update_at: '',
             status: false
-            
         },
+        updateItem: {            
+            id: 0,
+            name: '',
+            context: '',
+            interval: 0,
+            create_at: '',
+            update_at: '',
+            status: false
+        },
+        actionAddItem: false,
+        pushAlertSuccess: false,
+        pushAlertError: false,
     }),
+    getters: {
+        getNewItem() {
+            return this.newItem
+        }
+    },
     actions: {
         async getDags() {            
-            this.loader = true;
             const res = await fetch(`${url}dags`);
             const collections = await res.json();
             this.data = collections;
-            console.log(collections)
-            this.loader = false;
+            this.loader = false
         },
         async addDag() {
             this.loader = true
-            // const res = await fetch(`${url}dags`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json;charset=utf-8'
-            //     },
-            //     body: obj
-            // });
-            // const collections = await res.json();
-            // this.data = collections;
-            console.log("New item in state",this.newItem)
+            const res = await fetch(`${url}dags`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(this.newItem)
+            });
+            const collections = await res.json();
+            this.data = collections;
+            this.sendAlertMsg(res)
             this.cleanAddTableItem();
             this.loader = false
         },
@@ -52,12 +65,22 @@ export const useDagsStore = defineStore("dagStore", {
             });
             const collections = await res.json();
             this.data = collections;
+            this.sendAlertMsg(res);
             this.loader = false
         },
-        async updateDag(id, event) {
-            console.log(event)
+        async updateDag(id, data) {
             this.loader = true
-            console.log('send update');
+            console.log(data)
+            const res = await fetch(`${url}dags/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(data)
+            });
+            const collections = await res.json();
+            this.data = collections;;
+            this.sendAlertMsg(res)
             this.loader = false
         },
         addTableItem() {            
@@ -68,26 +91,27 @@ export const useDagsStore = defineStore("dagStore", {
             this.newItem.create_at = Date.now(),
             this.newItem.update_at = Date.now(),
             this.newItem.status = false
-            console.log(this.newItem)
-        },
-        updateTableItem(obj) {            
-            this.newItem.id = obj.id,
-            this.newItem.name = obj.name,
-            this.newItem.context = obj.context,
-            this.newItem.interval = obj.interval,
-            this.newItem.create_at = obj.create_at,
-            this.newItem.update_at = obj.update_at,
-            this.newItem.status = obj.status
-            console.log(this.newItem)
+            this.actionAddItem = true
         },
         cleanAddTableItem() {
-            this.newItem.id = undefined,
-            this.newItem.name = undefined,
-            this.newItem.context = undefined,
-            this.newItem.interval = undefined,
-            this.newItem.create_at = undefined,
-            this.newItem.update_at = undefined,
-            this.newItem.status = undefined
+            this.newItem.name = '',
+            this.actionAddItem = false
+        },
+        closeAlert(targetAlert) {
+            if (targetAlert === "success") {
+                this.pushAlertSuccess = false;
+            } else {
+                this.pushAlertError = false;
+            }            
+        },
+        sendAlertMsg(res) {
+            console.log(res.status, typeof(res.status))
+            if (res.status === 200 || res.status === 201) {
+                this.pushAlertSuccess = true
+            } else {
+                this.pushAlertError = true
+            }
         }
+        
     },
 });
