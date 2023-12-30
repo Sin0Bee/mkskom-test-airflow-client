@@ -1,58 +1,54 @@
 <script setup>
 import dagTable from './components/dagsTable.vue'
+import TableSkeleton from './components/TableSkeleton.vue'
+import MsgAlert from './components/MsgAlert.vue'
 import { useDagsStore } from './store/dagsStore'
 
 const dagStore = useDagsStore();
-dagStore.getDags();
+const loadData = () => {
+  dagStore.$patch((state) => {state.loader = true});
+  setTimeout(dagStore.getDags, 5000);
+}
+loadData();
+
 
 </script>
 
 <template>
-  <div class="container">
-    <div class="info_box">
-      <div class="alert">При операции произошла ошибка.</div>
-      <div class="success">Операция прошла успешно.</div>
-    </div>
-  <div class="main">    
-    <header><h1>Список активных DAG файлов</h1><button @click="dagStore.addTableItem" class="add_event">Добавить</button></header>
+  <MsgAlert :store="dagStore" :alertStatusSuccess="dagStore.pushAlertSuccess" :alertStatusError="dagStore.pushAlertError"/>
+  <div class="main_container">  
+
+    <header>
+      <h1>Список активных DAG файлов</h1>
+      <span @click="dagStore.addTableItem" class="add_event">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+        </svg>
+      </span>
+    </header>
     
-    <dagTable :data="dagStore.data" :dagStore="dagStore"/>
+
+    <div v-if="dagStore.loader === true"> <TableSkeleton/></div>
+    <div v-if="dagStore.loader === false"><dagTable  :dagStore="dagStore"/></div>
+    
   </div>
-  </div>
-  
-  
 </template>
 
 <style lang="css">
-
-.container {
-  background: linear-gradient(#d4d4d4aa, #87adece8);
+.add_event {
+  color: rgb(30, 78, 9);
+}
+.main_container {
+  background: linear-gradient(#d4d4d4aa, #b3c8e9e8);
   height: 100%;
 }
 
 header {
   width: 100%;
   text-align: center;
-  margin: 30px 0px;
 }
 
-.info_box {
-  top: 0px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-  height: 40px;
-  background: linear-gradient(#d4d4d400);
-}
-
-.alert {
-  width: 100%;
-}
-
-.success {
-  width: 100%;
-}
 
 </style>

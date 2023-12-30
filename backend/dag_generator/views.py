@@ -17,21 +17,32 @@ class DAGAPIView(generics.GenericAPIView):
         manager = DAGManager()
         result = manager.add(request.data)
 
+        try:
+            interval = int(request.data.get('interval', 1))
+            if interval < 1:
+                interval = 1
+            else:
+                interval = interval
+        except Exception as e:
+            return self._return_items(error=True)
+
         new_dag = MetaDAG.objects.create(
             name=result['data']['filename'],
             file_path=result['data']['path'],
             context=request.data['context'],
-            interval=request.data.get('interval', 0)
+            interval=interval
         )
 
         return self._return_items(update=True, new_item=new_dag)
 
-    def _return_items(self, update: bool = None, new_item: QuerySet = None) -> Response:
+    def _return_items(self, update: bool = None, new_item: QuerySet = None, error: bool = None) -> Response:
         dags = MetaDAG.objects.all()
 
         if update is not None:
             return Response({"dags": DAGSerializers(dags, many=True).data,
                              "new_dag": DAGSerializers(new_item).data}, status=201)
+        elif error is not None:
+            return Response({"dags": DAGSerializers(dags, many=True).data}, status=400)
         else:
             return Response({"dags": DAGSerializers(dags, many=True).data}, status=200)
 
@@ -64,10 +75,10 @@ class DAGWithIdAPIView(generics.GenericAPIView):
 
         return self._return_items()
 
-    def _return_items(self, error: bool = False) -> Response:
+    def _return_items(self, error: bool = None) -> Response:
         dags = MetaDAG.objects.all()
 
-        if error:
+        if error is None:
             return Response({"dags": DAGSerializers(dags, many=True).data}, status=200)
         else:
             return Response({"dags": DAGSerializers(dags, many=True).data}, status=400)
