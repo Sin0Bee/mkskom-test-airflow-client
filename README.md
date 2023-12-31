@@ -1,6 +1,9 @@
 # mkskom-test-airflow-client
 
-### swager: http://localhost/api/v1/docs
+### swagger: http://localhost:8000/api/v1/docs
+### ui: http://localhost
+### airflow-ui: http://localhost:8080
+### meta database: localhost:5433
 
 ## Требования
 ```
