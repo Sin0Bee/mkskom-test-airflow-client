@@ -9,7 +9,7 @@
                 <th>Actions</th>
             </tr>
             <hr>
-            <tr class="table_row" v-for="dag in dagStore.data.dags">
+            <tr class="table_row" v-for="(dag, index) in dagStore.data.dags">
                 <td>
                     <strong>
                         {{dag.name}}
@@ -17,17 +17,17 @@
                 </td>
                 <td>
                     <textarea 
-                        class="table_row_context" 
-                        name="context"
-                        :value="dag.context">
-                        {{dag.context}}
+                        @input="dagStore.data.dags[index].context = $event.target.value"
+                        v-model="dagStore.data.dags[index].context"
+                        class="table_row_context" >
                     </textarea>
                 </td>
                 <td>
                     <input 
+                        @input="dagStore.data.dags[index].interval = $event.target.value"
+                        v-model="dagStore.data.dags[index].interval"
                         class="table_row_interval" 
-                        type="number" 
-                        :value.number="dag.interval">
+                        type="number">
                 </td>
 
                 <td v-if="dag.status === true">
@@ -46,15 +46,7 @@
                 </td>
 
                 <td class="table_row_item_actions">
-                    <span @click="dagStore.updateDag(dag.id, {
-                    id: dag.id,
-                    name: dag.name,
-                    context: dag.context,
-                    interval: dag.interval,
-                    create_at: dag.create_at,
-                    update_at: Date.now(),
-                    status: dag.status,
-                })" class="table_row_item_btn_update_dag">
+                    <span @click="dagStore.updateDag(index)" class="table_row_item_btn_update_dag">
                         <strong>
                             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -139,29 +131,6 @@ const props = defineProps({
         type: Object,
         required: true 
     },
-    updateItem: {
-        type: Object,
-        required: false,
-        id: 0,
-        name: '',
-        context: '',
-        interval: 0,
-        update_at: Date.now(),
-        create_at: '',
-        status: false
-    },
-    setUpdateItem: (data) => {
-        this.updateItem.id = data.id;
-        this.updateItem.name = data.name;
-        this.updateItem.context = data.context;
-        this.updateItem.interval = data.interval;
-        this.updateItem.update_at = data.update_at;
-        this.updateItem.create_at = data.create_at;
-        this.updateItem.status = data.status;
-        return {
-            data: this.updateItem
-        }
-    }
 })
 </script>
 

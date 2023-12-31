@@ -1,5 +1,3 @@
-import json
-
 from airflow_api.airflow import AirflowAPI
 from celery_app import app
 from dag_generator.models import MetaDAG

@@ -15,15 +15,6 @@ export const useDagsStore = defineStore("dagStore", {
             update_at: '',
             status: false
         },
-        updateItem: {            
-            id: 0,
-            name: '',
-            context: '',
-            interval: 0,
-            create_at: '',
-            update_at: '',
-            status: false
-        },
         actionAddItem: false,
         pushAlertSuccess: false,
         pushAlertError: false,
@@ -68,15 +59,14 @@ export const useDagsStore = defineStore("dagStore", {
             this.sendAlertMsg(res);
             this.loader = false
         },
-        async updateDag(id, data) {
+        async updateDag(index) {
             this.loader = true
-            console.log(data)
-            const res = await fetch(`${url}dags/${id}`, {
+            const res = await fetch(`${url}dags/${this.data.dags[index].id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(this.data.dags[index])
             });
             const collections = await res.json();
             this.data = collections;;
