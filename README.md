@@ -21,7 +21,7 @@ Docker && Docker-compose
 #Инициализируем зависимости airflow:
  docker-compose up airflow-init
 ```
-
+# Создаем ENV файлы
 ## .env -> dir(config)
 ```
 META_STORAGE_LOGIN="postgres"
