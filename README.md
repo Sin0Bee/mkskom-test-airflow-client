@@ -1,5 +1,6 @@
 # mkskom-test-airflow-client
 
+### swager: http://localhost/api/v1/docs
 
 ## Требования
 ```
