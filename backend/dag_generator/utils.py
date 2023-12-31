@@ -105,7 +105,7 @@ class DAGManager:
         delete_status = self.delete_dag_file(filename=filename)
 
         if delete_status:
-            response_airflow = self.airflow_api.delete_dag(dag_id=filename)
+            self.airflow_api.delete_dag(dag_id=filename)
             generator = _GeneratorDAG(update_data)
             generator.generate()
 

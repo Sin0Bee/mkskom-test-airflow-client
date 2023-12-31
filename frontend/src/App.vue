@@ -7,7 +7,7 @@ import { useDagsStore } from './store/dagsStore'
 const dagStore = useDagsStore();
 const loadData = () => {
   dagStore.$patch((state) => {state.loader = true});
-  setTimeout(dagStore.getDags, 5000);
+  setTimeout(dagStore.getDags, 2000);
 }
 loadData();
 

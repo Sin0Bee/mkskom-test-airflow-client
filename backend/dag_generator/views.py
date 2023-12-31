@@ -23,7 +23,7 @@ class DAGAPIView(generics.GenericAPIView):
                 interval = 1
             else:
                 interval = interval
-        except Exception as e:
+        except Exception:
             return self._return_items(error=True)
 
         new_dag = MetaDAG.objects.create(
@@ -53,7 +53,6 @@ class DAGWithIdAPIView(generics.GenericAPIView):
     def patch(self, request, pk: int) -> Response:
         manager = DAGManager()
         qs_obj = MetaDAG.objects.filter(pk=pk)
-
         update_param = manager.update(filename=request.data['name'], data=request.data, db_data=qs_obj.values()[0])
 
         if update_param is not None:

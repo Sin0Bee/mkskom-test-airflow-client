@@ -1,5 +1,3 @@
-from django.test import TestCase
-
 from dag_generator.utils import DAGManager
 
 fake_update_data_example = {
