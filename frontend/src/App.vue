@@ -38,7 +38,11 @@ loadData();
 
 <style lang="css">
 .add_event {
+  cursor: pointer;
   color: rgb(30, 78, 9);
+}
+.add_event:hover {
+  color: rgb(54, 132, 21);
 }
 .main_container {
   background: linear-gradient(#d4d4d4aa, #b3c8e9e8);

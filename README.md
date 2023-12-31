@@ -3,7 +3,6 @@
 
 ## Требования
 ```
-Ubuntu server 22
 Docker && Docker-compose
 ```
 

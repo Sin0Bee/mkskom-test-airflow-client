@@ -26,6 +26,9 @@ const props = defineProps({
 })
 </script>
 
-<style lang="css" scoped>
 
+<style lang="css" scoped>
+.alert {
+    transition: all 2s ease-in-out 5.s;
+}
 </style>
