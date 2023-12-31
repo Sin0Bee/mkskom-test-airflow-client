@@ -95,7 +95,6 @@ export const useDagsStore = defineStore("dagStore", {
             }            
         },
         sendAlertMsg(res) {
-            console.log(res.status, typeof(res.status))
             if (res.status === 200 || res.status === 201) {
                 this.pushAlertSuccess = true
             } else {
