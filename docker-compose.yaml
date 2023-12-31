@@ -147,38 +147,38 @@ services:
         python manage.py runserver 0.0.0.0:8000
     restart: always
 
-#  web-api-beat:
-#    build:
-#      context: backend
-#      dockerfile: ../backend.Dockerfile
-#    container_name: 'web-api-beat'
-#    entrypoint: celery
-#    command: -A celery_app.app beat -l info
-#    volumes:
-#      - ./backend:/backend
-#      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
-#      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
-#    links:
-#      - redis
-#    depends_on:
-#      - web-api
-#      - redis
-#
-#  web-api-worker:
-#    build:
-#      context: backend
-#      dockerfile: ../backend.Dockerfile
-#    container_name: 'web-api-worker'
-#    entrypoint: celery
-#    command: -A celery_app.app worker -l info
-#    volumes:
-#      - ./backend:/backend
-#      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
-#      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
-#    links:
-#      - redis
-#    depends_on:
-#      - web-api-beat
+  web-api-beat:
+    build:
+      context: backend
+      dockerfile: ../backend.Dockerfile
+    container_name: 'web-api-beat'
+    entrypoint: celery
+    command: -A celery_app.app beat -l info
+    volumes:
+      - ./backend:/backend
+      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
+      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
+    links:
+      - redis
+    depends_on:
+      - web-api
+      - redis
+
+  web-api-worker:
+    build:
+      context: backend
+      dockerfile: ../backend.Dockerfile
+    container_name: 'web-api-worker'
+    entrypoint: celery
+    command: -A celery_app.app worker -l info
+    volumes:
+      - ./backend:/backend
+      - ${AIRFLOW_PROJ_DIR:-.}/dags:/backend/dags
+      - ${AIRFLOW_PROJ_DIR:-.}/config:/backend/config
+    links:
+      - redis
+    depends_on:
+      - web-api-beat
 
   frontend:
     build:
