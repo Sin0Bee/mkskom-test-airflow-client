@@ -10,10 +10,26 @@
             </tr>
             <hr>
             <tr class="table_row" v-for="dag in dagStore.data.dags">
-                <td><strong>{{dag.name}}</strong></td>
-                <td><textarea class="table_row_context" name="context">{{dag.context}}</textarea></td>
-                <td><input class="table_row_interval" type="number" 
-                    :value.number="dag.interval"></td>
+                <td>
+                    <strong>
+                        {{dag.name}}
+                    </strong>
+                </td>
+                <td>
+                    <textarea 
+                        class="table_row_context" 
+                        name="context"
+                        :value="dag.context">
+                        {{dag.context}}
+                    </textarea>
+                </td>
+                <td>
+                    <input 
+                        class="table_row_interval" 
+                        type="number" 
+                        :value.number="dag.interval">
+                </td>
+
                 <td v-if="dag.status === true">
                     <span class="table_row_item_status_up">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
@@ -28,6 +44,7 @@
                         </svg>
                     </span>
                 </td>
+
                 <td class="table_row_item_actions">
                     <span @click="dagStore.updateDag(dag.id, {
                     id: dag.id,
@@ -121,6 +138,29 @@ const props = defineProps({
     dagStore: {
         type: Object,
         required: true 
+    },
+    updateItem: {
+        type: Object,
+        required: false,
+        id: 0,
+        name: '',
+        context: '',
+        interval: 0,
+        update_at: Date.now(),
+        create_at: '',
+        status: false
+    },
+    setUpdateItem: (data) => {
+        this.updateItem.id = data.id;
+        this.updateItem.name = data.name;
+        this.updateItem.context = data.context;
+        this.updateItem.interval = data.interval;
+        this.updateItem.update_at = data.update_at;
+        this.updateItem.create_at = data.create_at;
+        this.updateItem.status = data.status;
+        return {
+            data: this.updateItem
+        }
     }
 })
 </script>

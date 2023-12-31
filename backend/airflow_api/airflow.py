@@ -3,8 +3,8 @@ from config.backend_env import config
 
 
 class AirflowAPI:
-    _BASE_URL = "http://localhost:8080/api/v1/"
-    # _BASE_URL = "http://airflow-webserver:8080/api/v1/"
+    # _BASE_URL = "http://localhost:8080/api/v1/"
+    _BASE_URL = "http://airflow-webserver:8080/api/v1/"
     _HEADERS = {
         "Content-type": "application/json",
         "Accept": "application/json"
