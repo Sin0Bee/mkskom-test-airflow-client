@@ -2,14 +2,17 @@
     <div class="table_box">
         <table class="table_main">
             <tr class="table_row_head">
+                <th>#</th>
                 <th>DAG_ID</th>
                 <th>Context</th>
-                <th>Interval</th>
+                <th>Interval (day)</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
             <hr>
-            <tr class="table_row" v-for="(dag, index) in dagStore.data.dags">
+            <div class="table_content">
+                <tr class="table_row" v-for="(dag, index) in dagStore.data.dags">
+                <td><strong>{{ index }}</strong></td>
                 <td>
                     <strong>
                         {{dag.name}}
@@ -64,6 +67,8 @@
                     </span>
                 </td>
             </tr>
+            </div>
+            
 
             <tr class="table_row" v-if="dagStore.actionAddItem">                
                 <td><input
@@ -135,6 +140,12 @@ const props = defineProps({
 </script>
 
 <style lang="css" scoped>
+
+.table_content {
+    overflow-y:scroll;
+    max-height: 700px;
+    display: block;
+}
 .table_row_item_status_down {
     color: red;
 }
@@ -192,11 +203,11 @@ const props = defineProps({
     align-items:center;
     text-align: center;
     display: grid;
-    grid-template-columns: repeat(5, 20%);
+    grid-template-columns: repeat(6, minmax(10%, 20%));
 }
 .table_row {
     display: grid;
-    grid-template-columns: repeat(5, 20%);
+    grid-template-columns: repeat(6, minmax(10%, 20%));
     align-items: center;
     text-align: center;
     width: 100%;
@@ -204,11 +215,17 @@ const props = defineProps({
     margin-top: 5px;
     border-bottom: solid 1px #5f5f5f;
 }
+
+.table_row:hover {
+    background: linear-gradient(#d4d4d4aa, #88b2f5e8), transparent;
+}
+
 .table_row_interval {
     max-width: 90%;
     padding: 0 5px;
     text-align: center;
 }
+
 .table_row_context {
     max-width: 90%;
     padding: 5px;
