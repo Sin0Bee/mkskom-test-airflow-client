@@ -30,7 +30,8 @@ class _GeneratorDAG:
     def _check_filename(self, fn: str) -> None | str:
         files = os.listdir(self._BASE_DAG_DIRECTORY)
 
-        except_words = [' ', '$', '\\', '&', '#', '!', '<', '>']
+        except_words = [' ', '$', '\\', '&', '#', '!', '<', '>', ':',
+                        ';', '^', '%', '*', '@', '[', ']', '"', "'", '~', '`',]
 
         for c in fn:
             if c in except_words:
