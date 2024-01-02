@@ -38,7 +38,7 @@ class MetaDAG(models.Model):
     context = models.TextField(blank=True, null=True)
     interval = models.PositiveIntegerField()
     create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    update_at = models.DateTimeField()
     status = models.BooleanField(default=False)
     on_delete = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
