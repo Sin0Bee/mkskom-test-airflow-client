@@ -120,7 +120,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - postgres-meta-storage-volume:/var/lib/postgresql/data
+      - postgres-storage-volume:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 10s
@@ -362,6 +362,6 @@ services:
 
 volumes:
   postgres-db-volume:
-  postgres-meta-storage-volume:
+  postgres-storage-volume:
 
 

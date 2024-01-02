@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import QuerySet
 from rest_framework import generics
 from rest_framework.response import Response
@@ -28,7 +30,8 @@ class DAGAPIView(generics.GenericAPIView):
             name=result['data']['filename'],
             file_path=result['data']['path'],
             context=dag_request_object.context,
-            interval=result['data']['interval']
+            interval=result['data']['interval'],
+            update_at=dag_request_object.update_at
         )
 
         return self._return_items(update=True, new_item=new_dag)
@@ -64,6 +67,7 @@ class DAGWithIdAPIView(generics.GenericAPIView):
 
         if update_param is not None:
             update_param['status'] = False
+            update_param['data']['update_at'] = dag_request_object.update_at
             db_obj.update(**update_param['data'])
 
             return self._return_items()
