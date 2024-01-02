@@ -4,6 +4,7 @@ import random
 from jinja2 import Environment, FileSystemLoader
 
 from airflow_api.airflow import AirflowAPI
+from dag_generator.models import DAGData
 
 
 class _GeneratorDAG:
@@ -56,44 +57,36 @@ class DAGManager:
     def __init__(self):
         self.airflow_api = AirflowAPI()
 
-    def add(self, data: dict) -> dict:
+    def add(self, data: DAGData) -> dict | None:
         dag_data = {}
 
-        generator = _GeneratorDAG(data)
+        generator = _GeneratorDAG(data.to_dict())
         path, filename = generator.generate()
+
+        try:
+            interval = int(data.interval)
+            if interval < 1:
+                dag_data['interval'] = 1
+            else:
+                dag_data['interval'] = interval
+        except Exception:
+            return None
 
         dag_data['path'] = path
         dag_data['filename'] = filename
 
-        return {"response": "success",
-                "data": dag_data}
+        return {"data": dag_data}
 
-    def delete(self, data: dict) -> dict:
-        response = {}
-
+    def delete(self, data: dict) -> None:
         delete_status = self.delete_dag_file(filename=data['name'])
 
         if delete_status:
-            response_airflow = self.airflow_api.delete_dag(dag_id=data['name'])
-            if response_airflow['response'] == 'success':
-                response['status_code'] = 200
-                response['status'] = 'success'
+            self.airflow_api.delete_dag(dag_id=data['name'])
 
-                return response
-            else:
-                response['status_code'] = 400
-                response['status'] = 'fall'
+    def update(self, filename: str, data: DAGData, db_data: dict) -> dict | None:
 
-                return response
-        else:
-            response['status_code'] = 400
-            response['status'] = 'fall'
-
-            return response
-
-    def update(self, filename: str, data: dict, db_data: dict) -> dict | None:
-        interval = self._check_param(param_name="interval", data=data, db_data=db_data)
-        context = self._check_param(param_name="context", data=data, db_data=db_data)
+        interval = self._check_param(param_name="interval", data=data.to_dict(), db_data=db_data)
+        context = self._check_param(param_name="context", data=data.to_dict(), db_data=db_data)
 
         update_data = {
             "name": filename,
