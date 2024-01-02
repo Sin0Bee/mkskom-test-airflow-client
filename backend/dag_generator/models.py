@@ -17,7 +17,19 @@ class DAGData(BaseModel):
     is_active: bool | None = None
 
     def to_dict(self):
-        ...
+        data = {
+            'pk': self.pk,
+            "name": self.name,
+            "interval": self.interval,
+            "context": self.context,
+            "file_path": self.file_path,
+            "create_at": self.create_at,
+            "update_at": self.update_at,
+            "status": self.status,
+            "on_delete": self.on_delete,
+            "is_active": self.is_active
+        }
+        return data
 
 
 class MetaDAG(models.Model):
