@@ -3,11 +3,11 @@
         <table class="table_main">
             <tr class="table_row_head">
                 <th>#</th>
-                <th>DAG_ID</th>
-                <th>Context</th>
-                <th>Interval (day)</th>
+                <th>Название</th>
+                <th>Код</th>
+                <th>Периодичность, раз в Х дней</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <th>Действия</th>
             </tr>
             <hr>
             <div class="table_content">
