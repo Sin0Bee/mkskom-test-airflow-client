@@ -61,6 +61,14 @@ export const useDagsStore = defineStore("dagStore", {
         },
         async updateDag(index) {
             this.loader = true
+            
+            this.data.dags.forEach((el) => {
+                if (String(el.interval).includes('.')) {
+                    let valid_number = String(el.interval).split(".")[0]
+                    this.data.dags[index].interval = valid_number
+                }
+            })
+
             const res = await fetch(`${url}dags/${this.data.dags[index].id}`, {
                 method: 'PATCH',
                 headers: {
